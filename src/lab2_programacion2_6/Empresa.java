@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.JTextArea;
 import java.io.File;
+import java.time.LocalDate;
 
 public class Empresa {
 
@@ -25,62 +26,65 @@ public class Empresa {
         empleados = new ArrayList<>();
     }
 
-    public int registrarEmpleados(String nombre, String id, Calendar contratacion,
+    public int registrarEmpleados(String nombre, int codigo, LocalDate contratacion,
             double salarioBase, int horasT, File foto,
-            String tipo, double tasa, Calendar finContrato) {
+            String tipo, double tasa, LocalDate finContrato) {
 
-        if (buscarEmpleado(id) != -1) {
-            return 0; 
+        if (buscarEmpleado(codigo) != -1) {
+            return 0;
         }
 
         switch (tipo) {
             case "Estandar":
-                empleados.add(new Empleado(id, nombre, contratacion, salarioBase, horasT, foto));
+                empleados.add(new Empleado(codigo, nombre, contratacion, horasT, foto));
                 return 1;
 
             case "Temporal":
-                empleados.add(new EmpleadoTemporal(id, nombre, contratacion, salarioBase, horasT, foto, finContrato));
+                empleados.add(new EmpleadoTemporal(codigo, nombre, contratacion, salarioBase, horasT, foto, finContrato));
                 return 2;
 
             case "Ventas":
-                empleados.add(new EmpleadoVentas(id, nombre, contratacion, salarioBase, horasT, foto, tasa));
+                empleados.add(new EmpleadoVentas(codigo, nombre, contratacion, salarioBase, horasT, foto, tasa));
                 return 3;
+
             default:
                 return 4;
-
-            
         }
-        
     }
 
-    public int registrarHorasTrabajadas(String id, int horasT) {
-        int index = buscarEmpleado(id);
+    public int registrarHorasTrabajadas(int codigo, int horasT) {
+        int index = buscarEmpleado(codigo);
 
         if (index == -1) {
             return -1;
         }
 
-        empleados.get(index).registrarHorasTrabajadas(horasT);
+        if (horasT < 0) {
+            return 0;
+        }
+
+        empleados.get(index).horasTrabajadas += horasT;
         return 1;
     }
 
-    public int registrarVentas(String id, double monto) {
-        int index = buscarEmpleado(id);
+    public int registrarVentas(int codigo, double monto) {
+        int index = buscarEmpleado(codigo);
 
         if (index == -1) {
             return -1;
         }
 
         try {
-            empleados.get(index).registrarVenta(monto);
+            int mesActual = Calendar.getInstance().get(Calendar.MONTH);
+            empleados.get(index).registrarVenta(mesActual, monto);
             return 1;
-        } catch (UnsupportedOperationException e) {
-            return 0; // no es empleado de ventas
+        } catch (Exception e) {
+            return 0;
         }
     }
 
-    public int actualizarFechaDeFinDeContrato(String id, Calendar actualizado) {
-        int index = buscarEmpleado(id);
+    public int actualizarFechaDeFinDeContrato(int codigo, LocalDate actualizado) {
+        int index = buscarEmpleado(codigo);
 
         if (index == -1) {
             return -1;
@@ -89,40 +93,42 @@ public class Empresa {
         try {
             empleados.get(index).actualizarFechaFinContrato(actualizado);
             return 1;
-        } catch (UnsupportedOperationException e) {
-            return 0; // no es temporal
+        } catch (Exception e) {
+            return 0;
         }
     }
 
-    public int buscarEmpleado(String id) {
+    public int buscarEmpleado(int codigo) {
         for (int i = 0; i < empleados.size(); i++) {
-            if (empleados.get(i).getID().equals(id)) {
+            if (empleados.get(i).getCodigo() == codigo) {
                 return i;
             }
         }
         return -1;
     }
 
-    public Empleado obtenerEmpleado(String id) {
-        int index = buscarEmpleado(id);
+    public Empleado obtenerEmpleado(int codigo) {
+        int index = buscarEmpleado(codigo);
+
         if (index == -1) {
             return null;
         }
+
         return empleados.get(index);
     }
 
-    public double calcularPagoMensual(String id) {
-        Empleado emp = obtenerEmpleado(id);
+    public double calcularPagoMensual(int codigo) {
+        Empleado emp = obtenerEmpleado(codigo);
 
         if (emp == null) {
             return -1;
         }
 
-        return emp.calcularPago();
+        return emp.calcularPago(emp.getHorasTrabajadas());
     }
 
-    public String buscarEmpleadoPorCodigo(String id) {
-        Empleado emp = obtenerEmpleado(id);
+    public String buscarEmpleadoPorCodigo(int codigo) {
+        Empleado emp = obtenerEmpleado(codigo);
 
         if (emp == null) {
             return "Empleado no encontrado.";
@@ -132,27 +138,35 @@ public class Empresa {
     }
 
     public void generarReportes(JTextArea area1, JTextArea area2, JTextArea area3) {
-        
+        area1.setText("");
+        area2.setText("");
+        area3.setText("");
 
         int contEstandar = 0;
         int contTemporal = 0;
         int contVentas = 0;
 
         for (Empleado emp : empleados) {
-            String info = emp.generarLineaReporte() + "\n----------------------------\n";
+            String info = emp.mostrarInformacion()
+                    + "\nHoras trabajadas: " + emp.getHorasTrabajadas()
+                    + "\nSalario base: " + emp.salarioBase
+                    + "\nPago calculado: " + emp.calcularPago(emp.getHorasTrabajadas())
+                    + "\n----------------------------\n";
 
-            switch (emp.getTipo()) {
-                case "Estandar":
+            String nombreClase = emp.getClass().getSimpleName();
+
+            switch (nombreClase) {
+                case "Empleado":
                     area1.append(info);
                     contEstandar++;
                     break;
 
-                case "Temporal":
+                case "EmpleadoTemporal":
                     area2.append(info);
                     contTemporal++;
                     break;
 
-                case "Ventas":
+                case "EmpleadoVentas":
                     area3.append(info);
                     contVentas++;
                     break;
