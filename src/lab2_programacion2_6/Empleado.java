@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.InputMismatchException;
 
 public class Empleado {
-    protected int codigo;
+    protected String codigo;
     protected  String nombre;
     protected LocalDate fechaContratacion;
     protected double salarioBase=1400;
@@ -17,7 +17,7 @@ public class Empleado {
     
     private static Scanner leer=new Scanner (System.in);
 
-    public Empleado(int codigo, String nombre, LocalDate fechaContratacion, int horasTrabajadas, File foto) {
+    public Empleado(String codigo, String nombre, LocalDate fechaContratacion, int horasTrabajadas, File foto) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.fechaContratacion = fechaContratacion;
@@ -100,11 +100,11 @@ public class Empleado {
         return totalVentas;
     }
     
-    public int getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(int codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
