@@ -7,8 +7,6 @@ public class Lab2_programacion2_6 {
 
        FrameGestion ventana=new FrameGestion(); 
 
-        
-
     }
     
 }
