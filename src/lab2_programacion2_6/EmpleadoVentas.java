@@ -4,6 +4,7 @@
  */
 package lab2_programacion2_6;
 
+import java.io.File;
 import java.time.LocalDate;
 
 public class EmpleadoVentas extends Empleado {
@@ -11,8 +12,8 @@ public class EmpleadoVentas extends Empleado {
     private double[] ventasMensuales;
     private double porcentajeComision;
 
-    public EmpleadoVentas(String id, String nombre, double tarifaPorHora, double porcentajeComision) {
-        super(id, nombre, tarifaPorHora);
+    public EmpleadoVentas(String codigo, String nombre, LocalDate fechaContratacion, int horasTrabajadas, File foto, double porcentajeComision) {
+        super(codigo, nombre, fechaContratacion, horasTrabajadas, foto);
         this.ventasMensuales = new double[12];
         this.porcentajeComision = porcentajeComision;
     }
@@ -20,7 +21,6 @@ public class EmpleadoVentas extends Empleado {
     public void registrarVenta(int mes, double monto) {
         if (mes >= 1 && mes <= 12) {
             if (monto > 0) {
-
                 this.ventasMensuales[mes - 1] += monto;
             } else {
                 System.out.println("El monto de la venta debe ser mayor a cero.");
@@ -32,7 +32,6 @@ public class EmpleadoVentas extends Empleado {
 
     @Override
     public double calcularPago(double horasTrabajadas) {
-
         int mesActual = LocalDate.now().getMonthValue();
         return calcularPagoPorMes(horasTrabajadas, mesActual);
     }
@@ -43,11 +42,11 @@ public class EmpleadoVentas extends Empleado {
             return 0.0;
         }
 
-        double salarioBase = this.tarifaPorHora * horasTrabajadas;
+        double salarioBaseCalculado = super.calcularPago(horasTrabajadas);
         double ventasDelMes = this.ventasMensuales[mes - 1];
         double comision = ventasDelMes * this.porcentajeComision;
 
-        return salarioBase + comision;
+        return salarioBaseCalculado + comision;
     }
 
     public void reiniciarVentasAnuales() {
@@ -71,15 +70,7 @@ public class EmpleadoVentas extends Empleado {
         return total;
     }
 
-    public double[] getVentasMensuales() {
-        return ventasMensuales;
-    }
-
-    public double getPorcentajeComision() {
-        return porcentajeComision;
-    }
-
-    public void setPorcentajeComision(double porcentajeComision) {
-        this.porcentajeComision = porcentajeComision;
-    }
+    public double[] getVentasMensuales() { return ventasMensuales; }
+    public double getPorcentajeComision() { return porcentajeComision; }
+    public void setPorcentajeComision(double porcentajeComision) { this.porcentajeComision = porcentajeComision; }
 }

@@ -1,35 +1,74 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
+
 package lab2_programacion2_6;
 
-/**
- *
- * @author User
- */
-public abstract class Empleado {
-    protected String id;
+import java.io.File;
+import java.util.Calendar;
+import java.time.LocalDate;
+import java.util.Scanner;
+import java.util.InputMismatchException;
+
+public class Empleado {
+    protected String codigo;
     protected String nombre;
-    protected double tarifaPorHora;
-
-    public Empleado(String id, String nombre, double tarifaPorHora) {
-        this.id = id;
-        this.nombre = nombre;
-        this.tarifaPorHora = tarifaPorHora;
-    }
-
+    protected LocalDate fechaContratacion;
+    protected double salarioBase = 1400;
+    protected int horasTrabajadas;
+    protected File foto;
     
-    public String getId() { return id; }
-    public String getNombre() { return nombre; }
-    public double getTarifaPorHora() { return tarifaPorHora; }
+    private static Scanner leer = new Scanner(System.in);
 
+    public Empleado(String codigo, String nombre, LocalDate fechaContratacion, int horasTrabajadas, File foto) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.fechaContratacion = fechaContratacion;
+        this.horasTrabajadas = horasTrabajadas;
+        this.foto = foto;
+    }   
+
+    public int registrarHTrabajadas() {
+        boolean horasAceptadas = false;
+        do {
+            System.out.println("Registre las horas trabajadas por el mes actual del empleado:");
+            try {
+                this.horasTrabajadas = leer.nextInt();
+                if (this.horasTrabajadas < 0) {
+                    System.out.println("No puede ingresar horas negativas.");
+                } else {
+                    horasAceptadas = true;
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Ingrese horas válidas.");
+                leer.next(); // Limpia el buffer del Scanner correctamente
+            }
+        } while (!horasAceptadas);   
+        return this.horasTrabajadas;
+    }
+    
+    public double calcularPago(double horas) {
+        if (horas > 160) {
+            System.out.println("Horas sobrepasan el limite. Se calcula con el maximo de 160hrs.");
+            horas = 160;
+        }
+        double subtotal = (horas / 160.0) * salarioBase; // 160.0 para evitar división entera
+        double deduccion = salarioBase * 0.035;
+        return subtotal - deduccion;  
+    }
     
     public String mostrarInformacion() {
-        return "ID: " + id + " | Nombre: " + nombre;
+        return "Codigo: " + codigo + ", Nombre: " + nombre + ", Fecha de contratacion: " + fechaContratacion;
     }
 
+    // Getters y Setters
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
 
-    public abstract double calcularPago(double horasTrabajadas);
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public LocalDate getFechaContratacion() { return fechaContratacion; }
+    public void setFechaContratacion(LocalDate fechaContratacion) { this.fechaContratacion = fechaContratacion; }
+
+    public int getHorasTrabajadas() { return horasTrabajadas; }
+    public void setHorasTrabajadas(int horasTrabajadas) { this.horasTrabajadas = horasTrabajadas; }
 }
-
