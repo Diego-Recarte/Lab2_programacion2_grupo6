@@ -11,7 +11,7 @@ public class Empleado {
     protected int codigo;
     protected  String nombre;
     protected LocalDate fechaContratacion;
-    protected double salarioBase=1400;
+    protected double salarioBase=14000;
     protected int horasTrabajadas;
     protected File foto;
     
