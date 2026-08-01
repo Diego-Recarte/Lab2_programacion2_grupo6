@@ -26,7 +26,7 @@ public class Empresa {
         empleados = new ArrayList<>();
     }
 
-    public int registrarEmpleados(String nombre, int codigo, LocalDate contratacion,
+    public int registrarEmpleados(String nombre, String codigo, LocalDate contratacion,
             double salarioBase, int horasT, File foto,
             String tipo, double tasa, LocalDate finContrato) {
 
@@ -40,11 +40,11 @@ public class Empresa {
                 return 1;
 
             case "Temporal":
-                empleados.add(new EmpleadoTemporal(codigo, nombre, contratacion, salarioBase, horasT, foto, finContrato));
+                empleados.add(new EmpleadoTemporal(codigo, nombre, contratacion, horasT, foto, finContrato));;
                 return 2;
 
             case "Ventas":
-                empleados.add(new EmpleadoVentas(codigo, nombre, contratacion, salarioBase, horasT, foto, tasa));
+                empleados.add(new EmpleadoVentas(codigo, nombre, contratacion, horasT, foto, tasa));
                 return 3;
 
             default:
@@ -52,7 +52,7 @@ public class Empresa {
         }
     }
 
-    public int registrarHorasTrabajadas(int codigo, int horasT) {
+    public int registrarHorasTrabajadas(String codigo, int horasT) {
         int index = buscarEmpleado(codigo);
 
         if (index == -1) {
@@ -67,7 +67,7 @@ public class Empresa {
         return 1;
     }
 
-    public int registrarVentas(int codigo, double monto) {
+    public int registrarVentas(String codigo, double monto) {
         int index = buscarEmpleado(codigo);
 
         if (index == -1) {
@@ -83,7 +83,7 @@ public class Empresa {
         }
     }
 
-    public int actualizarFechaDeFinDeContrato(int codigo, LocalDate actualizado) {
+    public int actualizarFechaDeFinDeContrato(String codigo, LocalDate actualizado) {
         int index = buscarEmpleado(codigo);
 
         if (index == -1) {
@@ -98,16 +98,16 @@ public class Empresa {
         }
     }
 
-    public int buscarEmpleado(int codigo) {
+    public int buscarEmpleado(String codigo) {
         for (int i = 0; i < empleados.size(); i++) {
-            if (empleados.get(i).getCodigo() == codigo) {
+            if (empleados.get(i).getCodigo(). equals( codigo)) {
                 return i;
             }
         }
         return -1;
     }
 
-    public Empleado obtenerEmpleado(int codigo) {
+    public Empleado obtenerEmpleado(String codigo) {
         int index = buscarEmpleado(codigo);
 
         if (index == -1) {
@@ -117,7 +117,7 @@ public class Empresa {
         return empleados.get(index);
     }
 
-    public double calcularPagoMensual(int codigo) {
+    public double calcularPagoMensual(String codigo) {
         Empleado emp = obtenerEmpleado(codigo);
 
         if (emp == null) {
@@ -127,7 +127,7 @@ public class Empresa {
         return emp.calcularPago(emp.getHorasTrabajadas());
     }
 
-    public String buscarEmpleadoPorCodigo(int codigo) {
+    public String buscarEmpleadoPorCodigo(String codigo) {
         Empleado emp = obtenerEmpleado(codigo);
 
         if (emp == null) {
