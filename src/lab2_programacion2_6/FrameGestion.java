@@ -47,6 +47,10 @@ public class FrameGestion extends JFrame implements ActionListener {
     JButton btnReporte = new JButton("Generar Reporte");
     JButton btnAgregar = new JButton("Agregar Empleado");
     JButton btnHoras = new JButton("Registrar Horas");
+    JButton btnCalcularP= new JButton("Calcular Pago Mensual");
+    JButton btnBuscar= new JButton("Buscar Empleado");
+    
+    
 
     JTextArea tSalida = new JTextArea();
 
@@ -62,7 +66,7 @@ public class FrameGestion extends JFrame implements ActionListener {
         this.setTitle("Gestion de empleados");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(true);
-        this.setSize(700, 700);
+        this.setSize(1280, 720);
         this.setLocationRelativeTo(null);
 
         setLayout(new BorderLayout());
@@ -113,6 +117,9 @@ public class FrameGestion extends JFrame implements ActionListener {
         panelBotones.add(btnVenta);
         panelBotones.add(btnContrato);
         panelBotones.add(btnReporte);
+        panelBotones.add(btnCalcularP);
+        panelBotones.add(btnBuscar);
+        
         add(panelBotones, BorderLayout.SOUTH);
 
         tSalida.setEditable(false);
@@ -125,6 +132,8 @@ public class FrameGestion extends JFrame implements ActionListener {
         btnVenta.addActionListener(this);
         btnContrato.addActionListener(this);
         btnReporte.addActionListener(this);
+        btnCalcularP.addActionListener(this);
+        btnBuscar.addActionListener(this);
 
         this.setVisible(true);
 
@@ -182,10 +191,14 @@ public class FrameGestion extends JFrame implements ActionListener {
 
         
         
-        if (e.getSource() == btnReporte) {
-            tSalida.append(" Reporte generado \n");
+        if (e.getSource() == btnCalcularP) {
+            tSalida.append(" Calculando pago mensual para " +tCodigo.getText()+  "\n");
         }
-
+        
+        
+         if (e.getSource() == btnBuscar) {
+            tSalida.append(" Buscando empleado codigo: " +tCodigo.getText()+  "\n");
+        }
         
         
         
