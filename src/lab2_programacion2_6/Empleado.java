@@ -43,7 +43,7 @@ public class Empleado {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Ingrese horas válidas.");
-                leer.next(); // Limpia el buffer del Scanner correctamente
+                leer.next(); 
             }
         } while (!horasAceptadas);
         return this.horasTrabajadas;
@@ -54,7 +54,7 @@ public class Empleado {
             System.out.println("Horas sobrepasan el limite. Se calcula con el maximo de 160hrs.");
             horas = 160;
         }
-        double subtotal = (horas / 160.0) * salarioBase; // 160.0 para evitar división entera
+        double subtotal = (horas / 160.0) * salarioBase;
         double deduccion = salarioBase * 0.035;
         return subtotal - deduccion;
     }
