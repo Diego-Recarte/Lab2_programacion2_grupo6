@@ -14,8 +14,8 @@ package lab2_programacion2_6;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import javax.swing.ImageIcon;
 import javax.swing.JTextArea;
+import java.io.File;
 
 public class Empresa {
 
@@ -26,7 +26,7 @@ public class Empresa {
     }
 
     public int registrarEmpleados(String nombre, String id, Calendar contratacion,
-            double salarioBase, int horasT, ImageIcon foto,
+            double salarioBase, int horasT, File foto,
             String tipo, double tasa, Calendar finContrato) {
 
         if (buscarEmpleado(id) != -1) {
@@ -45,9 +45,12 @@ public class Empresa {
             case "Ventas":
                 empleados.add(new EmpleadoVentas(id, nombre, contratacion, salarioBase, horasT, foto, tasa));
                 return 3;
+            default:
+                return 4;
 
             
         }
+        
     }
 
     public int registrarHorasTrabajadas(String id, int horasT) {
@@ -136,7 +139,7 @@ public class Empresa {
         int contVentas = 0;
 
         for (Empleado emp : empleados) {
-            String info = emp.generarLineaReporte() + "\n-------------------------\n";
+            String info = emp.generarLineaReporte() + "\n----------------------------\n";
 
             switch (emp.getTipo()) {
                 case "Estandar":
