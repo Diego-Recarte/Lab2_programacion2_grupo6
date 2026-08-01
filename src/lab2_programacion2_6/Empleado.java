@@ -123,6 +123,14 @@ public class Empleado {
     public void setFechaContracion(LocalDate fechaContracion) {
         this.fechaContratacion = fechaContracion;
     }
+
+    public int getHorasTrabajadas() {
+        return horasTrabajadas;
+    }
+
+    public void setHorasTrabajadas(int horasTrabajadas) {
+        this.horasTrabajadas = horasTrabajadas;
+    }
     
     
 }
