@@ -12,7 +12,11 @@ public class Empleado {
     protected String nombre;
 
     protected LocalDate fechaContratacion;
+
     protected double salarioBase = 1400;
+
+
+
     protected int horasTrabajadas;
     protected File foto;
 
@@ -123,4 +127,8 @@ public class Empleado {
     public void setHorasTrabajadas(int horasTrabajadas) {
         this.horasTrabajadas = horasTrabajadas;
     }
+
+ 
+    
+
 }
