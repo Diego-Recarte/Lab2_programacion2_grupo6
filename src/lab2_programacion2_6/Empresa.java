@@ -40,11 +40,11 @@ public class Empresa {
                 return 1;
 
             case "Temporal":
-                empleados.add(new EmpleadoTemporal(codigo, nombre, contratacion, salarioBase, horasT, foto, finContrato));
+                empleados.add(new EmpleadoTemporal(codigo, nombre, contratacion, horasT, foto, finContrato));;
                 return 2;
 
             case "Ventas":
-                empleados.add(new EmpleadoVentas(codigo, nombre, contratacion, salarioBase, horasT, foto, tasa));
+                empleados.add(new EmpleadoVentas(codigo, nombre, contratacion, horasT, foto, tasa));
                 return 3;
 
             default:
