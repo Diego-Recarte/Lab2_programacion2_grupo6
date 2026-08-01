@@ -11,7 +11,7 @@ public class Empleado {
     protected String codigo;
     protected  String nombre;
     protected LocalDate fechaContratacion;
-    protected double salarioBase=1400;
+    protected double salarioBase=14000;
     protected int horasTrabajadas;
     protected File foto;
     
@@ -122,6 +122,14 @@ public class Empleado {
 
     public void setFechaContracion(LocalDate fechaContracion) {
         this.fechaContratacion = fechaContracion;
+    }
+
+    public int getHorasTrabajadas() {
+        return horasTrabajadas;
+    }
+
+    public void setHorasTrabajadas(int horasTrabajadas) {
+        this.horasTrabajadas = horasTrabajadas;
     }
     
     
