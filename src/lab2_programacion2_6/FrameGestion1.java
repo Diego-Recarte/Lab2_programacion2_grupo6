@@ -26,6 +26,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 /**
  *
@@ -44,6 +46,12 @@ public class FrameGestion1 extends JFrame implements ActionListener {
     JTextField tCodigoContrato = new JTextField();
     JTextField tCodigoBuscar = new JTextField();
     JTextField tCodigoPago = new JTextField();
+
+    JTextArea tReporteEstandar = new JTextArea();
+    JTextArea tReporteTemporal = new JTextArea();
+    JTextArea tReporteVentas = new JTextArea();
+
+    Empresa empresa = new Empresa();
 
     JLabel Foto = new JLabel("No existe Foto");
     JButton btnFoto = new JButton("Elegir Foto");
@@ -203,6 +211,15 @@ public class FrameGestion1 extends JFrame implements ActionListener {
 
     }
 
+   
+
+    private LocalDate convertirFecha(JDateChooser chooser) {
+        if (chooser.getDate() == null) {
+            return LocalDate.now();
+        }
+        return chooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnFoto) {
@@ -230,37 +247,110 @@ public class FrameGestion1 extends JFrame implements ActionListener {
                 tipo = "Ventas";
             }
 
-            tSalida.append("Empleado agregado (" + tipo + "): " + tCodigoAgregar.getText() + " - " + tNombreAgregar.getText() + "\n");
+            String codigo = tCodigoAgregar.getText();
+            String nombre = tNombreAgregar.getText();
+            LocalDate fechaContratacion = convertirFecha(FechaContratacion);
+            double salarioBase;
+            double tasaComision = 0;
+            LocalDate fechaFin = null;
 
+            try {
+                salarioBase = Double.parseDouble(tSalarioBAgregar.getText());
+            } catch (NumberFormatException ex) {
+                tSalida.append("Error: ingrese un salario base valido.\n");
+                return;
+            }
+
+            if (tipo.equals("Ventas")) {
+                try {
+                    tasaComision = Double.parseDouble(tTcomisionAgregar.getText()) / 100.0;
+                } catch (NumberFormatException ex) {
+                    tSalida.append("Error: ingrese una tasa de comision valida.\n");
+                    return;
+                }
+            }
+
+            if (tipo.equals("Temporal")) {
+                fechaFin = convertirFecha(FechaFinContratoAgregar);
+            }
+
+            File foto = rutaFoto.isEmpty() ? null : new File(rutaFoto);
+
+            int resultado = empresa.registrarEmpleados(nombre, codigo, fechaContratacion, salarioBase, 0, foto, tipo, tasaComision, fechaFin);
+
+            if (resultado == 0) {
+                tSalida.append("Error: el codigo " + codigo + " ya existe.\n");
+            } else if (resultado == 4) {
+                tSalida.append("Error: seleccione un tipo de empleado valido.\n");
+            } else {
+                tSalida.append("Empleado agregado (" + tipo + "): " + codigo + " - " + nombre + "\n");
+            }
         }
 
         if (e.getSource() == btnHoras) {
-
-            tSalida.append("Horas registradas para: " + tCodigoHoras.getText() + " -> " + tHoras.getText() + "\n");
+            String codigo = tCodigoHoras.getText();
+            try {
+                int horas = Integer.parseInt(tHoras.getText());
+                int resultado = empresa.registrarHorasTrabajadas(codigo, horas);
+                if (resultado == -1) {
+                    tSalida.append("Error: empleado " + codigo + " no encontrado.\n");
+                } else if (resultado == 0) {
+                    tSalida.append("Error: las horas no pueden ser negativas.\n");
+                } else {
+                    tSalida.append("Horas registradas para: " + codigo + " -> " + horas + "\n");
+                }
+            } catch (NumberFormatException ex) {
+                tSalida.append("Error: ingrese un numero de horas valido.\n");
+            }
         }
 
         if (e.getSource() == btnVenta) {
-
-            tSalida.append("Venta registrada para: " + tCodigoVenta.getText() + " -> " + tMontoVenta.getText() + "\n");
+            String codigo = tCodigoVenta.getText();
+            try {
+                double monto = Double.parseDouble(tMontoVenta.getText());
+                int resultado = empresa.registrarVentas(codigo, monto);
+                if (resultado == -1) {
+                    tSalida.append("Error: empleado " + codigo + " no encontrado.\n");
+                } else if (resultado == 0) {
+                    tSalida.append("Error: no se pudo registrar la venta.\n");
+                } else {
+                    tSalida.append("Venta registrada para: " + codigo + " -> " + monto + "\n");
+                }
+            } catch (NumberFormatException ex) {
+                tSalida.append("Error: ingrese un monto de venta valido.\n");
+            }
         }
 
         if (e.getSource() == btnContrato) {
-
-            tSalida.append("Contrato actualizado para: " + tCodigoContrato.getText() + "\n");
+            String codigo = tCodigoContrato.getText();
+            LocalDate nuevaFecha = convertirFecha(FechaFinContratoNueva);
+            int resultado = empresa.actualizarFechaDeFinDeContrato(codigo, nuevaFecha);
+            if (resultado == -1) {
+                tSalida.append("Error: empleado " + codigo + " no encontrado.\n");
+            } else {
+                tSalida.append("Contrato actualizado para: " + codigo + "\n");
+            }
         }
 
         if (e.getSource() == btnCalcularP) {
-            tSalida.append(" Calculando pago mensual para " + tCodigoPago.getText() + "\n");
+            String codigo = tCodigoPago.getText();
+            double pago = empresa.calcularPagoMensual(codigo);
+            if (pago == -1) {
+                tSalida.append("Error: empleado " + codigo + " no encontrado.\n");
+            } else {
+                tSalida.append("Pago mensual para " + codigo + ": $" + String.format("%.2f", pago) + "\n");
+            }
         }
 
         if (e.getSource() == btnBuscar) {
-            tSalida.append(" Buscando empleado codigo: " + tCodigoBuscar.getText() + "\n");
+            String codigo = tCodigoBuscar.getText();
+            String info = empresa.buscarEmpleadoPorCodigo(codigo);
+            tSalida.append(info + "\n");
         }
 
         if (e.getSource() == btnReporte) {
-            tSalida.append("---- Reporte generado ----\n");
+            empresa.generarReportes(tSalida, tSalida, tSalida);
         }
-
     }
 
 }
