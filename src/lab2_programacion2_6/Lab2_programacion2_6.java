@@ -5,8 +5,8 @@ public class Lab2_programacion2_6 {
 
     public static void main(String[] args) {
 
-       FrameGestion ventana=new FrameGestion(); 
-
+       FrameGestion1 ventana=new FrameGestion1();
+       
     }
     
 }
